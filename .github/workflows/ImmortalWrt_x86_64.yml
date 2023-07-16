@@ -60,19 +60,14 @@ jobs:
         sed -i 's/255.255.255.0/255.255.252.0/g' package/base-files/files/bin/config_generate
         cp -f "${GITHUB_WORKSPACE}/configs/immortalwrt_x86_64.config" ".config"
         make defconfig
+        echo "strDate=$(TZ=UTC-8 date +%Y-%m-%d)" >> $GITHUB_ENV
     - name: Build OpenWrt
       working-directory: ./openwrt
       run: |
         echo -e "$(($(nproc)+1)) thread compile"
         make -j$(($(nproc)+1)) || make -j1 V=s
-    - name: Moving Files
-      run: |
-        mkdir publish
-        mv -f "openwrt/bin/targets/x86/64/*" "./publish"
-        echo "strDate=$(TZ=UTC-8 date +%Y-%m-%d)" >> $GITHUB_ENV
     - name: Upload Artifact
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin_x86_64_${{ env.strDate }}
-        path: ./publish
+        path: ./openwrt/bin
