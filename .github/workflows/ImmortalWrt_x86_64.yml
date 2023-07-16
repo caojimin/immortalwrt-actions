@@ -51,11 +51,13 @@ jobs:
         REPO_BRANCH: v21.02.6
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
     - name: Config
       working-directory: ./openwrt
       run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        sed -i 's/192.168.1.1/192.168.220.3/g' package/base-files/files/bin/config_generate
+        sed -i 's/255.255.255.0/255.255.252.0/g' package/base-files/files/bin/config_generate
         cp -f "${GITHUB_WORKSPACE}/configs/immortalwrt_x86_64.config" ".config"
         make defconfig
     - name: Build OpenWrt
