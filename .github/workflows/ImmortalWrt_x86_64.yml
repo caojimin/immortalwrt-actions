@@ -20,24 +20,9 @@ jobs:
       run: |
         docker rmi `docker images -q`
         echo "Deleting files, please wait ..."
-        sudo rm -rf \
-          /usr/share/dotnet \
-          /etc/mysql \
-          /etc/php
-        sudo -E apt-get -y purge \
-          azure-cli \
-          ghc* \
-          zulu* \
-          hhvm \
-          llvm* \
-          firefox \
-          google* \
-          dotnet* \
-          powershell \
-          openjdk* \
-          mysql* \
-          php*
-        sudo -E apt-get update
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php
+        sudo -E apt-get -y purge azure-cli* docker* ghc* zulu* hhvm* llvm* firefox* google* dotnet* aspnetcore* powershell* openjdk* adoptopenjdk* mysql* php* mongodb* moby* snap* || true
+        sudo -E apt-get -qq update
         sudo -E apt-get -y install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
           bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
           g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
@@ -67,6 +52,9 @@ jobs:
         cp -f "${GITHUB_WORKSPACE}/configs/immortalwrt_x86_64.config" ".config"
         make defconfig
         echo "strDate=$(TZ=UTC-8 date +%Y-%m-%d)" >> $GITHUB_ENV
+    - name: df3
+      run: |
+        df -h
     - name: Build OpenWrt
       working-directory: ./openwrt
       run: |
