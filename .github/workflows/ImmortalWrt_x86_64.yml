@@ -3,7 +3,10 @@ name: ImmortalWrt_x86_64
 on:
   repository_dispatch:
   workflow_dispatch:
-
+  
+permissions:
+  contents: write
+  
 jobs:
   build:
     runs-on: ubuntu-20.04
